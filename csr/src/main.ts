@@ -1,23 +1,40 @@
 import './style.css'
-import typescriptLogo from './typescript.svg'
-import { setupCounter } from './counter'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
+  <label>Estado </label>
+    <input type="text" id="estado" />
+    <button id="boton">Cambiar estado</button>
   </div>
+  <div id="cuerpo"></div>
 `
+const boton = document.querySelector<HTMLButtonElement>('#boton')!
+const estado = document.querySelector<HTMLInputElement>('#estado')!
+const cuerpo = document.querySelector<HTMLDivElement>('#cuerpo')!
+import axios from 'axios'
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const http_Axios = axios.create({
+    baseURL: 'http://localhost:2500',
+})
+
+boton.addEventListener('click', async () => {
+    const Estado = estado.value
+    const { data } = await http_Axios.get(`/`)
+    const tabla = document.createElement('table')
+    tabla.id = 'tabla'
+    tabla.border = '1'
+    tabla.align = 'center'
+
+    for (let apuesta of data) {
+        const row = tabla.insertRow()
+        const celda = row.insertCell()
+
+        celda.innerHTML = ` <button class="boton" value="${apuesta.codigo}">${apuesta.evento}</button> `
+        const celda2 = row.insertCell()
+        celda2.innerHTML = `${apuesta.estado}`
+    }
+
+    cuerpo.innerHTML = ''
+    cuerpo.appendChild(tabla)
+    console.log(data)
+})

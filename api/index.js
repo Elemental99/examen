@@ -3,7 +3,7 @@ const cors = require('cors')
 
 const app = express()
 const ruta = express.Router()
-const puerto = 3000
+const puerto = 2500
 
 //Consultar
 let apuestas = []
@@ -44,6 +44,11 @@ ruta.put('/:id', (req, res) => {
     comida.evento = body.evento
     comida.resultado = body.resultado
     comida.valor_apostado = body.valor_apostado
+    if (comida.estado === 'apostado') {
+        comida.estado = body.estado
+    } else {
+        comida.estado = 'apostado'
+    }
     comida.estado = body.estado
     res.status(200).send({
         message: 'Dato modificado con exito',
