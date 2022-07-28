@@ -36,5 +36,13 @@ boton.addEventListener('click', async () => {
 
     cuerpo.innerHTML = ''
     cuerpo.appendChild(tabla)
-    console.log(data)
+    document.querySelectorAll('.boton').forEach((element: Element) => {
+        ;(element as HTMLButtonElement).addEventListener('click', async () => {
+            const { data } = await http_Axios.get(
+                `/${(element as HTMLButtonElement).value}`,
+            )
+            console.log(data)
+            estado.value = data.estado
+        })
+    })
 })

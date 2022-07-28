@@ -13,6 +13,16 @@ ruta.get('/', (req, res) => {
     res.status(200).send(apuestas)
 })
 
+ruta.get('/:id', (req, res) => {
+    const id = req.params.id
+    const apuesta = apuestas.find((apuesta) => apuesta.codigo == id)
+    if (apuesta) {
+        res.status(200).send(apuesta)
+    } else {
+        res.status(404).send('No se encontró la apuesta')
+    }
+})
+
 //Insertar
 ruta.post('/', (req, res) => {
     const { body } = req
