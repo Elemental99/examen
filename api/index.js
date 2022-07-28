@@ -1,17 +1,61 @@
-import express from 'express'
-import { postRequest } from './controllers/index.js'
+const express = require('express')
+const cors = require('cors')
 
 const app = express()
-const route = express.Router()
+const ruta = express.Router()
+const puerto = 3000
 
-app.use(express.json())
+//Consultar
+let apuestas = []
+app.use(cors()).use(express.json())
 
-route.get('/', (req, res) => {
-    res.send('Hello World!')
+ruta.get('/', (req, res) => {
+    res.status(200).send(apuestas)
 })
 
-route.post('/', postRequest)
+//Insertar
+ruta.post('/', (req, res) => {
+    const { body } = req
+    if (apuestas.filter((c) => c.codigo == body.codigo).length > 0) {
+        return res.status(400).send({
+            message: 'El codigo ya existe',
+            response: body,
+        })
+    }
+    apuestas.push(body)
+    res.status(201).send({
+        message: 'El dato se inserto correctamente',
+        response: body,
+    })
+})
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000')
+//Update
+ruta.put('/:id', (req, res) => {
+    const { id } = req.params
+    const { body } = req
+    if (apuestas.filter((c) => c.codigo == id).length == 0) {
+        return res.status(400).send({
+            message: 'No se encuentra la apuesta que desea modificar',
+        })
+    }
+    let comida = apuestas.filter((c) => c.codigo == id)[0]
+    comida.codigo = body.codigo
+    comida.fecha = body.fecha
+    comida.evento = body.evento
+    comida.resultado = body.resultado
+    comida.valor_apostado = body.valor_apostado
+    comida.estado = body.estado
+    res.status(200).send({
+        message: 'Dato modificado con exito',
+        response: comida,
+    })
+})
+
+//Delete
+ruta.delete('/', (req, res) => {})
+
+app.use('/', ruta)
+
+app.listen(puerto, () => {
+    console.log(`Servidor Ejecutado en puerto: ${puerto}`)
 })
