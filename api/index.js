@@ -52,7 +52,19 @@ ruta.put('/:id', (req, res) => {
 })
 
 //Delete
-ruta.delete('/', (req, res) => {})
+ruta.delete('/:id', (req, res) => {
+    const { id } = req.params
+    if (apuestas) {
+        apuestas.filter((c) => c.codigo !== id)
+        res.status(200).send({
+            message: 'Dato eliminado con exito',
+        })
+    } else {
+        return res.status(400).send({
+            message: 'No se encuentra la apuesta que desea eliminar',
+        })
+    }
+})
 
 app.use('/', ruta)
 
